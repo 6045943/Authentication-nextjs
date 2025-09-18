@@ -44,21 +44,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
       setLoading(false)
       return
     }
-    const { error: dbError } = await supabase.from("Users").insert([
-      {
-        id: data.user.id,
-        email: data.user.email,
-      },
-    ])
-
     setLoading(false)
-
-    if (dbError) {
-      setError(dbError.message)
-    } else {
-      setSuccess(true)
-      console.log("User signed up and profile created:", data)
-    }
+    setSuccess(true)
+    console.log("User signed up:", data)
   }
   
 
