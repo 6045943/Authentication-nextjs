@@ -14,19 +14,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {supabase} from "@/lib/supabaseClient"
 import { AlertMessage } from "./alert-message"
-
+import { useRouter } from "next/navigation"
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    setSuccess(false)
     setLoading(true)
 
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -46,15 +45,14 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
       return
     }
     setLoading(false)
-    setSuccess(true)
-    console.log("User signed up:", data)
+    
+    router.push("/login")
   }
-  
 
   return (
 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} success={success} />
+      <AlertMessage error={error || undefined} />
       <Card>
         <CardHeader>
           <CardTitle>Create new account</CardTitle>
