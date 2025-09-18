@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertMessage } from "./alert-message"
 
 export function LoginForm({
   className,
@@ -67,6 +67,7 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <AlertMessage error={error || undefined} />
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
