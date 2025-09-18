@@ -105,7 +105,7 @@ export function LoginForm({
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <a
-                    href="#"
+                    href="/auth/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
@@ -118,11 +118,6 @@ export function LoginForm({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                {(error) && (
-                  <div className={cn("text-center text-sm font-medium text-red-600")}>
-                    {error}
-                  </div>
-                )}
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
