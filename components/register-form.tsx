@@ -13,6 +13,7 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {supabase} from "@/lib/supabaseClient"
+import { AlertMessage } from "./alert-message"
 
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
@@ -51,7 +52,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
   
 
   return (
+
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <AlertMessage error={error || undefined} success={success} />
       <Card>
         <CardHeader>
           <CardTitle>Create new account</CardTitle>
@@ -83,14 +86,6 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 />
-                         {(error || success) && (
-                <div className={cn(
-                  "text-center text-sm font-medium",
-                  error ? "text-red-600" : "text-green-600"
-                )}>
-                  {error ? error : "Account created successfully!"}
-                </div>
-              )}
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
