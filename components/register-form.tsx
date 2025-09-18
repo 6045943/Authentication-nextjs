@@ -95,6 +95,14 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 />
+                         {(error || success) && (
+                <div className={cn(
+                  "text-center text-sm font-medium",
+                  error ? "text-red-600" : "text-green-600"
+                )}>
+                  {error ? error : "Account created successfully!"}
+                </div>
+              )}
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
