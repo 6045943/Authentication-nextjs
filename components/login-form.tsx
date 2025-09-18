@@ -48,6 +48,18 @@ export function LoginForm({
       return
     }
 
+    // Persist auth cookies on server so middleware sees the session
+    if (data.session?.access_token && data.session.refresh_token) {
+      await fetch("/api/auth/set-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        }),
+      })
+    }
+
     // Verify profile exists in Users
     const { error: usersError } = await supabase
       .from("Users")
