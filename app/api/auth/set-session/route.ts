@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 
+type CookieOptions = Partial<{
+  path: string;
+  domain: string;
+  maxAge: number;
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "lax" | "strict" | "none";
+  expires: Date;
+}>;
+
 export async function POST(request: Request) {
   try {
     const { access_token, refresh_token } = await request.json()
@@ -16,14 +26,20 @@ export async function POST(request: Request) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return request.headers.get("cookie")?.split(`${name}=`)[1]
+          getAll() {
+            const cookieHeader = request.headers.get("cookie") || ""
+            if (!cookieHeader) return []
+            return cookieHeader.split("; ").map((cookie) => {
+              const index = cookie.indexOf("=")
+              const name = cookie.substring(0, index)
+              const value = cookie.substring(index + 1)
+              return { name, value }
+            })
           },
-          set(name: string, value: string, options: any) {
-            response.cookies.set({ name, value, ...options })
-          },
-          remove(name: string, options: any) {
-            response.cookies.set({ name, value: "", ...options })
+          setAll(cookies) {
+            for (const { name, value, options } of cookies as Array<{ name: string; value: string; options?: CookieOptions }>) {
+              response.cookies.set({ name, value, ...(options || {}) })
+            }
           },
         },
       }
@@ -33,6 +49,7 @@ export async function POST(request: Request) {
 
     return response
   } catch (error) {
+    console.error(error)
     return NextResponse.json({ error: "Failed to set session" }, { status: 500 })
   }
 }

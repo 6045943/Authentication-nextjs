@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
+import type { VerifyOtpParams } from "@supabase/supabase-js"
 
 export default function AuthCallbackPage() {
   const router = useRouter()
@@ -18,10 +19,11 @@ export default function AuthCallbackPage() {
         return
       }
 
-      const { data, error } = await supabase.auth.verifyOtp({
+      const params: VerifyOtpParams = {
         type,
         token_hash: tokenHash,
-      } as any)
+      }
+      const { data, error } = await supabase.auth.verifyOtp(params)
 
       if (error || !data?.session) {
         router.replace("/login")
