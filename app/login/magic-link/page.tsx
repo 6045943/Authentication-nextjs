@@ -1,3 +1,5 @@
+export const prerender = false
+
 import { MagicLinkForm } from "@/components/magic-link-form"
 
 export default function Page() {

@@ -5,8 +5,9 @@ import { CheckCircle, AlertCircle } from "lucide-react"
 interface AlertMessageProps {
     error?: string;
     success?: boolean;
+    successMessage?: string;
 }
-export function AlertMessage({ error, success }: AlertMessageProps) {
+export function AlertMessage({ error, success, successMessage }: AlertMessageProps) {
     if (!error && !success) return null;
 
     return (
@@ -22,7 +23,7 @@ export function AlertMessage({ error, success }: AlertMessageProps) {
         <CheckCircle className="h-4 w-4 text-green-600" />
       )}
       <AlertDescription>
-        {error ? error : "Account created successfully!"}
+        {error ? error : (successMessage || "Success!")}
       </AlertDescription>
     </Alert>
   )

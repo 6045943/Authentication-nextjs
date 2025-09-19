@@ -52,7 +52,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
   return (
 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} />
+      <AlertMessage error={error || undefined} success successMessage="Account created successfully!" />
       <Card>
         <CardHeader>
           <CardTitle>Create new account</CardTitle>

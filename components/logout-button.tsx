@@ -15,7 +15,7 @@ export function LogoutButton() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       })
-    } catch (_err) {
+    } catch {
       // ignore
     } finally {
       setLoading(false)

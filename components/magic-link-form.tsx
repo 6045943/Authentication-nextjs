@@ -49,7 +49,7 @@ export function MagicLinkForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} success={success || undefined} />
+      <AlertMessage error={error || undefined} success={success || undefined} successMessage="Magic link is verzonden naar je e-mail." />
       <Card>
         <CardHeader>
           <CardTitle>Sign in with Magic Link</CardTitle>

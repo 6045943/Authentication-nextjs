@@ -80,7 +80,7 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} />
+      <AlertMessage error={error || undefined} success successMessage="Logged in successfully!" />
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
