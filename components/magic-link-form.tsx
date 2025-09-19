@@ -9,55 +9,55 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {supabase} from "@/lib/supabaseClient"
-import { AlertMessage } from "./alert-message"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabaseClient"
+import { AlertMessage } from "./alert-message"
+import { Mail } from 'lucide-react';
 
-export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
+export function MagicLinkForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<boolean>(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(false)
     setLoading(true)
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
+    const { error: magicError } = await supabase.auth.signInWithOtp({
       email,
-      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     })
 
-    if (signUpError) {
-      setError(signUpError.message)
+    if (magicError) {
+      setError(magicError.message)
       setLoading(false)
       return
     }
 
-    if (!data.user) {
-      setError("User not created")
-      setLoading(false)
-      return
-    }
+    setSuccess(true)
     setLoading(false)
-    
-    router.push("/login")
   }
 
   return (
-
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} />
+      <AlertMessage error={error || undefined} success={success || undefined} />
       <Card>
         <CardHeader>
-          <CardTitle>Create new account</CardTitle>
+          <CardTitle>Sign in with Magic Link</CardTitle>
           <CardDescription>
-            Enter your email below to create a new account
+            Enter your email below
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -74,27 +74,15 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input 
-                id="password" 
-                type="password" required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Registering..." : "Register"}
+                  {loading ? "Sending..." : "Send Magic Link"}
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
               <a href="/login" className="underline underline-offset-4">
-                Log in
+                Back to Login
               </a>
             </div>
           </form>

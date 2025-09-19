@@ -15,6 +15,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
 import { AlertMessage } from "./alert-message"
+import { Mail } from 'lucide-react';
 
 export function LoginForm({
   className,
@@ -123,9 +124,6 @@ export function LoginForm({
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Login with Google
-                </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
@@ -137,6 +135,12 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
+      <div className="flex items-center gap-2 justify-center">
+        <Mail />
+        <a href="/login/sign-in">
+          Sign In with Magic Link
+        </a>
+      </div>
     </div>
   )
 }
