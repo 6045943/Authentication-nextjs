@@ -2,6 +2,16 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 
+type CookieOptions = Partial<{
+  path: string;
+  domain: string;
+  maxAge: number;
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "lax" | "strict" | "none";
+  expires: Date;
+}>;
+
 export async function POST(req: NextRequest) {
   const res = NextResponse.json({ success: true })
 
@@ -11,14 +21,14 @@ export async function POST(req: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return req.cookies.get(name)?.value
+          getAll() {
+            const cookies = req.cookies.getAll()
+            return cookies.map((c) => ({ name: c.name, value: c.value }))
           },
-          set(name: string, value: string, options: any) {
-            res.cookies.set({ name, value, ...options })
-          },
-          remove(name: string, options: any) {
-            res.cookies.set({ name, value: "", ...options })
+          setAll(cookies) {
+            for (const { name, value, options } of cookies as Array<{ name: string; value: string; options?: CookieOptions }>) {
+              res.cookies.set({ name, value, ...(options || {}) })
+            }
           },
         },
       }
@@ -28,6 +38,7 @@ export async function POST(req: NextRequest) {
 
     return res
   } catch (error) {
+    console.error(error)
     return NextResponse.json({ error: "Failed to logout" }, { status: 500 })
   }
 }
