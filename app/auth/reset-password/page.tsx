@@ -5,8 +5,10 @@ import { supabase } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
@@ -20,6 +22,7 @@ export default function ResetPasswordPage() {
       setMessage(error.message);
     } else {
       setMessage("Your password has been updated! You can now log in.");
+      router.push("/login");
     }
   }
 

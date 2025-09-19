@@ -34,21 +34,29 @@ export default function ForgotPasswordPage() {
       <p className="text-sm text-gray-600">
         Enter your email, and we’ll send you a reset link.
       </p>
-      <form onSubmit={handleResetPassword} className="space-y-3">
-        <div className="grid gap-2">
-          <Label>Email</Label>
-          <Input
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <Button type="submit" disabled={loading}>
-          {loading ? "Sending..." : "Send reset link"}
-        </Button>
-      </form>
+<form onSubmit={handleResetPassword} className="space-y-3">
+  <div className="grid gap-2">
+    <Label>Email</Label>
+    <div className="flex items-center space-x-2">
+      <Input
+        type="email"
+        placeholder="you@example.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        className="flex-1"
+      />
+      <Button asChild>
+        <a href="/login">Back to login</a>
+      </Button>
+    </div>
+  </div>
+
+  <Button type="submit" disabled={loading} className="w-full">
+    {loading ? "Sending..." : "Send reset link"}
+  </Button>
+</form>
+
       {message && <p className="text-sm text-gray-600">{message}</p>}
     </div>
   );
