@@ -7,6 +7,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { AlertMessage } from "./alert-message"
+import Link from "next/link"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 type AuthFormProps = React.ComponentProps<"div"> & {
   title: string
@@ -40,8 +51,7 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} success={success || undefined} successMessage={successMessage}
-      />
+      <AlertMessage error={error || undefined} success={success || undefined} successMessage={successMessage}/>
       {beforeFields}
       <Card>
         <CardHeader>
@@ -49,7 +59,7 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <div>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -67,13 +77,47 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
                 <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? `${submitLabel}...` : submitLabel}
-                </Button>
+                <Dialog>
+                  <form  onSubmit={handleSubmit}>
+                    <DialogTrigger asChild>
+                      <Button className="w-full" disabled={loading}>
+                        {submitLabel}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Choose any</DialogTitle>
+                        <DialogDescription>
+                          Make changes to your profile here. Click save when you&apos;re
+                          done.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4">
+                        <div className="grid gap-3">
+                          <Button type="submit" className="w-full" disabled={loading}>
+                             {loading ? `"No Organisation"...` : "No Organisation"}
+                          </Button>
+                        </div>
+                        <div className="grid gap-3">
+                          <Link href={"/register/organisation"}>
+                            <Button className="w-full">
+                              A Organisation
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
               </div>
             </div>
             {footer && <div className="mt-4 text-center text-sm">{footer}</div>}
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>
