@@ -21,12 +21,14 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
+    setSuccess(false)
 
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
@@ -45,6 +47,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
       return
     }
     setLoading(false)
+    setSuccess(true)
     
     router.push("/login")
   }
@@ -52,7 +55,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
   return (
 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} success successMessage="Account created successfully!" />
+      <AlertMessage error={error || undefined} success={success || undefined} successMessage="Account created successfully!" />
       <Card>
         <CardHeader>
           <CardTitle>Create new account</CardTitle>

@@ -25,12 +25,14 @@ export function LoginForm({
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
+    setSuccess(false)
 
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -48,6 +50,8 @@ export function LoginForm({
       setLoading(false)
       return
     }
+
+    setSuccess(true)
 
     // Persist auth cookies on server so middleware sees the session
     if (data.session?.access_token && data.session.refresh_token) {
@@ -80,7 +84,7 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <AlertMessage error={error || undefined} success successMessage="Logged in successfully!" />
+      <AlertMessage error={error || undefined} success={success || undefined} successMessage="Logged in successfully!" />
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
