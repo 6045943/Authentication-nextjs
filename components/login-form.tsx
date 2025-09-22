@@ -18,6 +18,7 @@ export function LoginForm({
         description="Enter your email below to login to your account"
         submitLabel="Login"
         successMessage="Logged in successfully!"
+        passwordRight={<a href="/auth/forgot-password">Forgot your password?</a>}
         beforeFields={
           <div className="hidden" />
         }

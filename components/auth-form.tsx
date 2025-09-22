@@ -16,9 +16,10 @@ type AuthFormProps = React.ComponentProps<"div"> & {
   footer?: React.ReactNode
   beforeFields?: React.ReactNode
   successMessage?: string
+  passwordRight?: React.ReactNode
 }
 
-export function AuthForm({ className, title, description, submitLabel, onSubmitCredentials, footer, beforeFields, successMessage, ...props }: AuthFormProps) {
+export function AuthForm({ className, title, description, submitLabel, onSubmitCredentials, footer, beforeFields, successMessage, passwordRight, ...props }: AuthFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -57,6 +58,11 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
+                  {passwordRight && (
+                    <div className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
+                      {passwordRight}
+                    </div>
+                  )}
                 </div>
                 <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
