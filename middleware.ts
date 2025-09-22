@@ -38,6 +38,39 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Protect admin route and ensure user has admin role
+  if (pathname.startsWith("/admin")) {
+    if (!session) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = "/login"
+      redirectUrl.searchParams.set("redirectedFrom", pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // Fetch role id from Users, then role name from roles
+    const { data: userRow } = await supabase
+      .from("Users")
+      .select("role")
+      .eq("id", session.user.id)
+      .single()
+
+    let roleName: string | null = null
+    if ((userRow as any)?.role !== undefined && (userRow as any)?.role !== null) {
+      const { data: rolesRow } = await supabase
+        .from("roles")
+        .select("role_name")
+        .eq("id", (userRow as any).role)
+        .single()
+      roleName = (rolesRow as any)?.role_name ?? null
+    }
+
+    const isAdmin = roleName === "admin" || roleName === "supa_admin"
+    console.log("Middleware roleName:", roleName, "isAdmin:", isAdmin, "path:", pathname) // ZICHTBAAR IN TERMINAL
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL("/dashboard", req.url))
+    }
+  }
+
   // Redirect authenticated users away from auth pages
   if ((pathname === "/login" || pathname === "/register") && session) {
     return NextResponse.redirect(new URL("/dashboard", req.url))
@@ -47,5 +80,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/register"],
 }

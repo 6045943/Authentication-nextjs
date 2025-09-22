@@ -65,21 +65,35 @@ export function LoginForm({
       })
     }
 
-    // Verify profile exists in Users
-    const { error: usersError } = await supabase
+    // Step 1: fetch numeric role id from Users
+    const { data: userRow, error: usersError } = await supabase
       .from("Users")
-      .select("id")
+      .select("id, role")
       .eq("id", data.user.id)
       .single()
 
     setLoading(false)
 
-    if (usersError) {
+    if (usersError || !userRow) {
       setError("Account niet gevonden in Users")
       return
     }
 
-    router.push("/dashboard")
+    // Step 2: look up role name from roles table
+    let roleName: string | null = null
+    if ((userRow as any)?.role !== undefined && (userRow as any)?.role !== null) {
+      const { data: roleRow } = await supabase
+        .from("roles")
+        .select("role_name")
+        .eq("id", (userRow as any).role)
+        .single()
+      roleName = (roleRow as any)?.role_name ?? null
+    }
+
+    const isAdmin = roleName === "admin" || roleName === "supa_admin"
+    console.log("Login roleName:", roleName, "isAdmin:", isAdmin)
+    const destination = isAdmin ? "/admin" : "/dashboard"
+    router.push(destination)
   }
 
   return (
