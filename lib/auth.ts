@@ -40,7 +40,7 @@ export class AuthService {
 
     if (usersError || !userRow) return null
 
-    const roleId = (userRow as any).role
+    const { role: roleId } = userRow as { id: string; role: string | number | null }
     if (roleId === undefined || roleId === null) return null
 
     const { data: roleRow } = await supabase
@@ -49,7 +49,8 @@ export class AuthService {
       .eq("id", roleId)
       .single()
 
-    return (roleRow as any)?.role_name ?? null
+    const roleName = (roleRow as { role_name: string } | null)?.role_name ?? null
+    return roleName
   }
 
   getDestinationForRole(roleName: string | null): string {
