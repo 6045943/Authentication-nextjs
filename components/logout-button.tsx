@@ -8,7 +8,7 @@ export function LogoutButton() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  const handleLogout = async (_e?: React.MouseEvent) => {
+  const handleLogout = async () => {
     setLoading(true)
     try {
       await fetch("/api/auth/logout", {
