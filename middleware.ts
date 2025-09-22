@@ -28,6 +28,17 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // Allow reset-password only via magic link (requires flag)
+  if (pathname.startsWith("/auth/reset-password")) {
+    const hasRecoveryFlag = req.nextUrl.searchParams.get("recovery") === "1"
+    if (!hasRecoveryFlag) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = "/auth/forgot-password"
+      redirectUrl.search = "" // clear any params
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
+
   // Protect dashboard routes
   if (pathname.startsWith("/dashboard")) {
     if (!session) {
@@ -80,5 +91,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/register", "/auth/reset-password"],
 }
