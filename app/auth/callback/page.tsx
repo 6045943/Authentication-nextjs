@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabaseClient"
 import type { VerifyOtpParams } from "@supabase/supabase-js"
+import { sessionService } from "@/lib/session"
 
 export default function AuthCallbackPage() {
   const router = useRouter()
@@ -23,21 +23,9 @@ export default function AuthCallbackPage() {
         type,
         token_hash: tokenHash,
       }
-      const { data, error } = await supabase.auth.verifyOtp(params)
-
-      if (error || !data?.session) {
-        router.replace("/login")
-        return
-      }
-
-      const { access_token, refresh_token } = data.session
-      const res = await fetch("/api/auth/set-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ access_token, refresh_token }),
-      })
-
-      if (!res.ok) {
+      try {
+        await sessionService.verifyOtpAndPersist(params)
+      } catch {
         router.replace("/login")
         return
       }

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { supabase } from "@/lib/supabaseClient"
+import { organisationService } from "@/lib/organisation"
 import { AlertMessage } from "@/components/alert-message"
 
 export default function RegisterOrganisationPage() {
@@ -25,47 +25,16 @@ export default function RegisterOrganisationPage() {
     setSuccess(false)
     setLoading(true)
     try {
-      // 1) Maak auth user
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password })
-      if (signUpError || !signUpData.user?.id) {
-        setError(signUpError?.message || "Failed to register user")
-        return
-      }
-      const userId = signUpData.user.id
-
-      // 2) Maak Users entry met rol = admin
-      // ⚠️ LET OP: hier gebruik ik upsert, zodat duplicate key errors niet meer voorkomen
-      const { error: userError } = await supabase
-        .from("Users")
-        .upsert({ id: userId, email, role: 2 }) // 2 = admin
-      if (userError) {
-        setError(userError.message)
-        return
-      }
-
-      // 3) Maak organisatie
-      const { data: orgInsert, error: orgError } = await supabase
-        .from("organisations")
-        .insert({ display_name: displayName, location })
-        .select("id")
-        .single()
-      if (orgError || !orgInsert?.id) {
-        setError(orgError?.message || "Failed to create organisation")
-        return
-      }
-
-      // 4) Link user aan organisatie
-      const { error: linkError } = await supabase
-        .from("user_organisations")
-        .insert({ user_id: userId, organisation_id: orgInsert.id })
-      if (linkError) {
-        setError(linkError.message)
-        return
-      }
-
-      // 5) Klaar
+      await organisationService.createUserOrganisationAdmin({
+        email,
+        password,
+        displayName,
+        location,
+      })
       setSuccess(true)
       router.push("/login")
+    } catch (err: any) {
+      setError(err?.message || "Failed to create organisation")
     } finally {
       setLoading(false)
     }
