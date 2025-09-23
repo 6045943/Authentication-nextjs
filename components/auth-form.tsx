@@ -77,8 +77,10 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
                 <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
               <div className="flex flex-col gap-3">
+              {submitLabel === "Register" ? (
+                // Alleen bij registreren
                 <Dialog>
-                  <form  onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit}>
                     <DialogTrigger asChild>
                       <Button className="w-full" disabled={loading}>
                         {submitLabel}
@@ -95,7 +97,7 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
                       <div className="grid gap-4">
                         <div className="grid gap-3">
                           <Button type="submit" className="w-full" disabled={loading}>
-                             {loading ? `"No Organisation"...` : "No Organisation"}
+                            {loading ? `"No Organisation"...` : "No Organisation"}
                           </Button>
                         </div>
                         <div className="grid gap-3">
@@ -114,6 +116,14 @@ export function AuthForm({ className, title, description, submitLabel, onSubmitC
                     </DialogContent>
                   </form>
                 </Dialog>
+              ) : (
+                // Bij inloggen direct form submit
+                <form onSubmit={handleSubmit}>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Loading..." : submitLabel}
+                  </Button>
+                </form>
+              )}
               </div>
             </div>
             {footer && <div className="mt-4 text-center text-sm">{footer}</div>}

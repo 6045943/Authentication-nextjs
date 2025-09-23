@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { magicLinkService } from "@/lib/magic-link"
 import { AlertMessage } from "./alert-message"
 
 export function MagicLinkForm({
@@ -30,15 +30,10 @@ export function MagicLinkForm({
     setSuccess(false)
     setLoading(true)
 
-    const { error: magicError } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-
-    if (magicError) {
-      setError(magicError.message)
+    try {
+      await magicLinkService.sendMagicLink(email)
+    } catch (err: any) {
+      setError(err?.message || "Failed to send magic link")
       setLoading(false)
       return
     }
